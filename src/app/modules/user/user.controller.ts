@@ -26,8 +26,23 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Get current User Detail By Token Id
+
+const getMe = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.user;
+  // Call the service method to create a new user and get the result
+  const result = await userServices.getMe(id);
+  // Send a success response with the created resource data
+  sendResponse(res, {
+    message: 'User Detail Retrieved Successfully',
+    data: result,
+  });
+});
+
+
 export const userControllers = {
   createUser,
   loginUser,
+  getMe
 };
 

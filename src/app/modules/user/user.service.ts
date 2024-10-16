@@ -10,7 +10,7 @@ import bcrypt from 'bcrypt';
 // Service function to create a new user.
 
 const createUser = async (payload: TUser) => {
-  if(!payload.profilePicture) {
+  if (!payload.profilePicture) {
     throw new AppError(400, 'Profile Picture Is Required');
   }
   const { password, ...data } = payload;
@@ -26,9 +26,9 @@ const loginUser = async (payload: { email: string; password: string }) => {
   if (!user) {
     throw new Error('User not found');
   }
-  if (!user.isVerified) {
-    throw new Error('Please Verify Your Account');
-  }
+  // if (!user.isVerified) {
+  //   throw new Error('Please Verify Your Account');
+  // }
   const isMatch = bcrypt.compareSync(payload.password, user.password);
   if (!isMatch) {
     throw new Error('Incorrect Password Try Again');
@@ -39,20 +39,28 @@ const loginUser = async (payload: { email: string; password: string }) => {
     config.jwt_access_secret as string,
     config.jwt_access_expires as string
   );
-  return { token };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {password,...userData} = user.toObject();
+  return { token, ...userData };
 };
 
-// Service function to retrieve a single user by ID.
 
-const getUserById = async (id: string) => {
+//Get Current User Detail By Token Id
+const getMe = async (id: string) => {
   return await UserModel.findById(id);
+};
+
+
+const updateMe = async (id: string, payload: TUser) => {
+  return await UserModel.findByIdAndUpdate(id, payload, { new: true });
 };
 
 // Service function to retrieve multiple user based on query parameters.
 
 export const userServices = {
   createUser,
-  getUserById,
+  getMe,
   loginUser,
+  updateMe
 };
 

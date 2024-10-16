@@ -4,6 +4,7 @@ import { userControllers } from './user.controller';
 import validateRequest from '../../middlewares/validateRequest';
 import { userValidation } from './user.validation';
 import { upload, uploadImage } from '../../utils/uploadImage';
+import AuthorizeRequest from '../../middlewares/auth';
 
 // Import controller from corresponding module
 
@@ -23,6 +24,9 @@ router.post(
 
 //Login User
 router.post('/login', validateRequest(userValidation.loginUserSchema), userControllers.loginUser);
+
+// Get current User Detail By Token Id
+router.get('/me', AuthorizeRequest(), userControllers.getMe);
 
 const userRoutes = router;
 export default userRoutes;

@@ -22,15 +22,16 @@ const AuthorizeRequest = (...roles: string[]) => {
     try {
       const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
       req.user = decoded;
-      const { id, role, iat } = decoded;
-      if (roles && !roles.includes(decoded?.role)) {
+      const { id, role } = decoded;
+      if (roles.length > 0 && !roles.includes(role)) {
         throw new AppError(401, 'Unauthorized Access');
       }
       const user = await UserModel.findById(id);
       if (!user) {
         throw new Error('User not found');
       }
-    } catch (error:any) {
+    } catch (error: any) {
+      console.log(error);
       throw new AppError(401, 'Unauthorized Access');
     }
     next();
@@ -38,3 +39,4 @@ const AuthorizeRequest = (...roles: string[]) => {
 };
 
 export default AuthorizeRequest;
+
