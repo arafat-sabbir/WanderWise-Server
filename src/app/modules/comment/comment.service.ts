@@ -71,12 +71,12 @@ const deleteComment = async (payload: { id: string; user: string }) => {
 
 const getAllCommentForAPostFromDb = async (id: string) => {
   const comments = await Comment.find({ post: id }).populate({path:'user',select:"-password"});
-  return comments;
+  return comments||[];
 };
 
 const getSingleCommentFromDb = async (id: string) => {
   const comment = await Comment.findById(id).populate({path:'user',select:"-password"});
-  return comment;
+  return comment||{};
 };
 
 export const commentServices = {
