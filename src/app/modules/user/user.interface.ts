@@ -4,12 +4,18 @@
  * This type defines the structure of a single user object.
  * @interface TUser
  */
-export interface TUser {
-  name: string;
+import { ObjectId } from "mongodb";
+
+export interface User {
+  _id: ObjectId;
   email: string;
   password: string;
-  photo: string;
-  isVerified: boolean;
-  role:"user" | "admin"
+  name: string;
+  profilePicture?: string; // URL to the profile picture
+  bio?: string; // Short biography
+  isVerified: boolean; // If the user is verified
+  followers: ObjectId[]; // List of User IDs that follow this user
+  following: ObjectId[]; // List of User IDs that this user follows
+  role: string;
 }
 
