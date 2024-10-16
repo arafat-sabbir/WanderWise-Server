@@ -21,6 +21,18 @@ router.post(
   postControllers.createPost
 );
 
+// Get All The Post With Sort Filter Or Pagination
+router.get("/", postControllers.getAllPost);
+
+
+// Get Single Post By Post _Id
+router.get("/:postId", postControllers.getSinglePost);
+
+
+// Delete Single Post By Post _Id
+router.delete("/:postId", postControllers.deleteSinglePost);
+
+
 const postRoutes = router;
 export default postRoutes;
 

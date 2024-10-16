@@ -1,17 +1,35 @@
-// Import Router from express
-// Import Router from express
-import { Router } from 'express';
-
-// Import controller from corresponding module
-import { commentControllers } from './comment.controller';
+import express from 'express';
+import { CommentValidation } from './comment.validation';
+import { CommentControllers } from './comment.controller';
+import AuthorizeRequest from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
-import { commentValidation } from './comment.validation';
+const router = express.Router();
 
 
-// Initialize router
-const router = Router();
+// Comment On A Post By Post Id
+router.post(
+  '/:id',
+  AuthorizeRequest('user', 'admin'),
+  validateRequest(CommentValidation.createCommentSchema),
+  CommentControllers.createNewComment
+);
 
-router.post("/create-comment",validateRequest(commentValidation.createCommentSchema), commentControllers.createComment);
+// Edit comment By CommentId
+router.put(
+  '/:id',
+  AuthorizeRequest('user', 'admin'),
+  validateRequest(CommentValidation.createCommentSchema),
+  CommentControllers.editComment
+);
+
+// Delete comment By CommentId
+router.delete('/:id', AuthorizeRequest('user', 'admin'), CommentControllers.deletedComment);
+
+router.get('/get-post-comment/:id', CommentControllers.getAllCommentForAPost);
+
+router.get('/:id', CommentControllers.getSingleComment);
 
 const commentRoutes = router;
+
 export default commentRoutes;
+

@@ -1,21 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { TComment } from './comment.interface';
 
-// Define an interface representing a Comment document
+const commentSchema = new Schema<TComment>({
+  user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+  comment: { type: String, required: true },
+  post: { type: Schema.Types.ObjectId, required: true, ref: 'Post' },
+});
 
-// Define the Comment schema
-const CommentSchema: Schema<TComment> = new Schema({
-  // Define schema fields here
-  // Example fields (replace with actual schema)
-  // fieldName: {
-  //   type: Schema.Types.FieldType,
-  //   required: true,
-  //   trim: true,
-  // },
-},{timestamps:true,versionKey:false});
+const Comment = model<TComment>('Comment', commentSchema);
 
-// Create the Comment model
-const CommentModel = mongoose.model<TComment>('Comment', CommentSchema);
+export default Comment;
 
-// Export the Comment model
-export default CommentModel;

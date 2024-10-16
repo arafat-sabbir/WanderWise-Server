@@ -1,12 +1,14 @@
 import { z } from "zod";
 
-// Validation Schema For createComment
-const createCommentSchema = z.object({
-  body:z.object({
-
-  })
+export const createCommentSchema = z.object({
+    body: z.object({
+        comment: z.string({
+            required_error: "Comment is required"
+        })
+    })
 })
 
-export const commentValidation = {
-  createCommentSchema
-}
+
+export const CommentValidation = { createCommentSchema }
+
+

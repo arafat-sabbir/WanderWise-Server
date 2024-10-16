@@ -1,48 +1,67 @@
-import { Request, Response } from 'express';
-import { commentServices } from './comment.service';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
+import { commentServices } from './comment.service';
 
-// Controller function to handle the creation of a single Comment.
-const createComment = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to create a new comment and get the result
-  const result = await commentServices.createComment(req.body);
-  // Send a success response with the created resource data
-    sendResponse(res, {
-    message: 'New Comment created Successfully',
-    data: result,
+const createNewComment = catchAsync(async (req, res) => {
+  const { id:postId } = req.params;
+  const { id } = req.user;
+  const result = await commentServices.createNewComment({
+    user: id as any,
+    post: postId as any,
+    comment: req.body.comment,
   });
-});
-
-
-
-// Controller function to handle the retrieval of a single comment by ID.
- const getSingleComment = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  // Call the service method to get the comment by ID and get the result
-  const result = await commentServices.getCommentById(id);
-  // Send a success response with the retrieved resource data
-   sendResponse(res, {
-    message: 'Comment Retrieved Successfully',
-    data: result,
-  });
-});
-
-
-// Controller function to handle the retrieval of multiple comment.
- const getAllComment = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to get multiple comment based on query parameters and get the result
-  const result = await commentServices.getAllComment(req.query);
-  // Send a success response with the retrieved resources data
   sendResponse(res, {
-    message: 'Comments Retrieved Successfully',
+    message: 'Comment created successfully',
     data: result,
   });
 });
 
+const editComment = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await commentServices.editComment({
+    id,
+    comment: req.body.comment,
+    user: req.user.id,
+  });
+  sendResponse(res, {
+    message: 'Comment updated successfully',
+    data: result,
+  });
+});
 
-export const commentControllers = {
-  createComment,
+const deletedComment = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await commentServices.deleteComment({ id, user: req.user.id });
+  sendResponse(res, {
+    message: 'Comment deleted successfully',
+    data: result,
+  });
+});
+
+const getAllCommentForAPost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await commentServices.getAllCommentForAPostFromDb(id);
+  sendResponse(res, {
+    message: 'Comment fetched For Specific Post successfully',
+    data: result,
+  });
+});
+
+const getSingleComment = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await commentServices.getSingleCommentFromDb(id);
+  sendResponse(res, {
+    message: 'Comment fetched successfully',
+    data: result,
+  });
+});
+
+export const CommentControllers = {
+  createNewComment,
+  editComment,
+  deletedComment,
+  getAllCommentForAPost,
   getSingleComment,
-  getAllComment,
-}
+};
+

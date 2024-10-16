@@ -15,18 +15,6 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Controller function to handle the retrieval of a single post by ID.
-const getSinglePost = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  // Call the service method to get the post by ID and get the result
-  const result = await postServices.getPostById(id);
-  // Send a success response with the retrieved resource data
-  sendResponse(res, {
-    message: 'Post Retrieved Successfully',
-    data: result,
-  });
-});
-
 // Controller function to handle the retrieval of multiple post.
 const getAllPost = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to get multiple post based on query parameters and get the result
@@ -38,8 +26,28 @@ const getAllPost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//Get single Post By Post _Id
+const getSinglePost = catchAsync(async (req: Request, res: Response) => {
+  const result = await postServices.getSinglePost(req.params.postId);
+  sendResponse(res, {
+    message: 'Post Retrieved Successfully',
+    data: result,
+  });
+});
+
+// Delete Single Post By PostId
+const deleteSinglePost = catchAsync(async (req: Request, res: Response) => {
+  const result = await postServices.deleteSinglePost(req.params.postId);
+  sendResponse(res, {
+    message: 'Post Deleted Successfully',
+    data: result,
+  });
+});
+
 export const postControllers = {
   createPost,
   getSinglePost,
   getAllPost,
+  deleteSinglePost,
 };
+

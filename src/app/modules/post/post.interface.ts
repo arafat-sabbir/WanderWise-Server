@@ -11,4 +11,5 @@ export interface TPost {
   isPremium: boolean; // If the post is premium content
   upvotes: ObjectId[]; // List of User IDs who upvoted the post
   downvotes: ObjectId[]; // List of User IDs who downvoted the post
+  comments: ObjectId[]; // List of comment IDs associated with the post
 }

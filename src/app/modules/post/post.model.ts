@@ -24,12 +24,19 @@ const PostSchema: Schema<TPost> = new Schema(
       required: true,
     },
     downvotes: {
-      type: [String],
-      required: true,
+      type: [Schema.Types.ObjectId],
+      default: [],
+      ref: 'User',
     },
     upvotes: {
-      type: [String],
+      type: [Schema.Types.ObjectId],
+      default: [],
+      ref: 'User',
+    },
+    comments: {
+      type: [Schema.Types.ObjectId],
       required: true,
+      ref: 'Comment',
     },
     isPremium: {
       type: Boolean,
