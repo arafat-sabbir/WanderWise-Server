@@ -41,25 +41,25 @@ const globalErrorHandler: ErrorRequestHandler = (
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
-    stack = config.NODE_ENV === 'development' && error.stack;
+    stack = config.node_env === 'development' && error.stack;
   } else if (error.name === 'ValidationError') {
     const simplifiedError = handleValidationError(error);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
-    stack = config.NODE_ENV === 'development' && error.stack;
+    stack = config.node_env === 'development' && error.stack;
   } else if (error.name === 'CastError') {
     const simplifiedError = handleCastError(error);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
-    stack = config.NODE_ENV === 'development' && error.stack;
+    stack = config.node_env === 'development' && error.stack;
   } else if (error.code === 11000) {
     const simplifiedError = handleDuplicateError(error);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
-    stack = config.NODE_ENV === 'development' && error.stack;
+    stack = config.node_env === 'development' && error.stack;
   } else if (error instanceof AppError) {
     statusCode = error?.statusCode;
     message = error?.message;
@@ -69,7 +69,7 @@ const globalErrorHandler: ErrorRequestHandler = (
         message: error.message,
       },
     ];
-    stack = config.NODE_ENV === 'development' && error.stack;
+    stack = config.node_env === 'development' && error.stack;
   } else if (error instanceof Error) {
     message = error?.message;
     errorSources = [
@@ -78,7 +78,7 @@ const globalErrorHandler: ErrorRequestHandler = (
         message: error.message,
       },
     ];
-    stack = config.NODE_ENV === 'development' && error.stack;
+    stack = config.node_env === 'development' && error.stack;
   }
 
   // Return a JSON response with the error message and status code.

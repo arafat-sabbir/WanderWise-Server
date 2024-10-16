@@ -40,9 +40,23 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 });
 
 
+// Update current user Detail By Token Id
+
+const updateMe = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.user;
+  // Call the service method to create a new user and get the result
+  const result = await userServices.updateMe(id, req.body);
+  // Send a success response with the created resource data
+  sendResponse(res, {
+    message: 'User Detail Updated Successfully',
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   loginUser,
-  getMe
+  getMe,
+  updateMe
 };
 

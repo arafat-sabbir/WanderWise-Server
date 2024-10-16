@@ -1,5 +1,5 @@
 // Import Router from express
-import { NextFunction, Request, Response, Router } from 'express';
+import { Router } from 'express';
 import { userControllers } from './user.controller';
 import validateRequest from '../../middlewares/validateRequest';
 import { userValidation } from './user.validation';
@@ -27,6 +27,8 @@ router.post('/login', validateRequest(userValidation.loginUserSchema), userContr
 
 // Get current User Detail By Token Id
 router.get('/me', AuthorizeRequest(), userControllers.getMe);
+
+router.put('/me', AuthorizeRequest(), userControllers.updateMe);
 
 const userRoutes = router;
 export default userRoutes;

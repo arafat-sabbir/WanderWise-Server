@@ -36,7 +36,6 @@ export const uploadImage = async (req: Request, res: Response, next: NextFunctio
         req.photo = uploadedImage?.secure_url;
         next();
     } catch (error:any) {
-        console.log(error);
         res.status(500).json({ error: 'Failed to upload image' });
     }
 };
