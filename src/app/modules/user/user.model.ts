@@ -1,15 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
 import { TUser } from './user.interface';
 
-// Define an interface representing a User document
-
 // Define the User schema
 const UserSchema: Schema<TUser> = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
     email: {
       type: String,
       required: true,
@@ -20,13 +14,34 @@ const UserSchema: Schema<TUser> = new Schema(
       type: String,
       required: true,
     },
-    photo: {
+    name: {
       type: String,
+      required: true,
+    },
+    profilePicture: {
+      type: String,
+      required: true,
+    },
+    bio: {
+      type: String,
+      required: true,
     },
     isVerified: {
       type: Boolean,
       default: false,
     },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     role: {
       type: String,
       default: 'user',

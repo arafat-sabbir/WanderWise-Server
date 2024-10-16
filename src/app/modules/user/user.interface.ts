@@ -6,7 +6,7 @@
  */
 import { ObjectId } from "mongodb";
 
-export interface User {
+export interface TUser {
   _id: ObjectId;
   email: string;
   password: string;

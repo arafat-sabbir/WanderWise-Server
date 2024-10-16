@@ -18,6 +18,9 @@ const createUserSchema = z.object({
         required_error: 'Password Is Required',
       })
       .min(6, 'Password Must Be At Least 6 Characters Long'),
+    bio: z.string({
+      required_error: 'Bio Is Required',
+    }),
   }),
 });
 
@@ -43,3 +46,4 @@ export const userValidation = {
   createUserSchema,
   loginUserSchema,
 };
+

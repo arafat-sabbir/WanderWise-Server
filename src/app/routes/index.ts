@@ -5,7 +5,7 @@ const router = Router();
 
 const routes = [
   {
-    path: '/user',
+    path: '/users',
     route: userRoutes,
   }
 ];

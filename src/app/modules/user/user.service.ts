@@ -1,5 +1,6 @@
 // Import the model
 import config from '../../config';
+import AppError from '../../errors/AppError';
 import generateToken from '../../utils/generateToken';
 import { hashInfo } from '../../utils/hashInfo';
 import { TUser } from './user.interface';
@@ -9,6 +10,9 @@ import bcrypt from 'bcrypt';
 // Service function to create a new user.
 
 const createUser = async (payload: TUser) => {
+  if(!payload.profilePicture) {
+    throw new AppError(400, 'Profile Picture Is Required');
+  }
   const { password, ...data } = payload;
   const hashedPassword = await hashInfo(password);
   const newUser = await UserModel.create({ password: hashedPassword, ...data });

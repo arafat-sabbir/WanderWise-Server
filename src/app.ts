@@ -19,6 +19,16 @@ const formatDate = (date: Date) => {
   };
   return new Intl.DateTimeFormat('en-US', options).format(date);
 };
+// Middleware setup
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+  })
+);
+
 
 // Middleware to log requests and responses
 const requestLogger = (req: Request, res: Response, next: NextFunction) => {
@@ -39,16 +49,8 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-
-// Middleware setup
-app.use(
-  cors({
-    origin: ['http://localhost:5173'],
-    credentials: true,
-  })
-);
-app.use(express.json());
 app.use(requestLogger);
+
 
 // Serve static files from the public directory
 const publicDirPath = path.join(__dirname, '..', 'public');
