@@ -39,7 +39,6 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
 // Update current user Detail By Token Id
 
 const updateMe = catchAsync(async (req: Request, res: Response) => {
@@ -53,10 +52,25 @@ const updateMe = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Follow Or Unfollow User
+
+const followOrUnFollowUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  // Call the service method to create a new user and get the result
+  const result = await userServices.followOrUnFollowUser(id, status, req.user.id);
+  // Send a success response with the created resource data
+  sendResponse(res, {
+    message: `${status.toUpperCase()}ED User Successfully'`,
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   loginUser,
   getMe,
-  updateMe
+  updateMe,
+  followOrUnFollowUser,
 };
 

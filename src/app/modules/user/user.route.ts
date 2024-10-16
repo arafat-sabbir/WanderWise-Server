@@ -30,6 +30,8 @@ router.get('/me', AuthorizeRequest(), userControllers.getMe);
 
 router.put('/me', AuthorizeRequest(), userControllers.updateMe);
 
+router.put('/follow-unfollow/:id',AuthorizeRequest(),validateRequest(userValidation.followOrUnFollowUser), userControllers.followOrUnFollowUser);
+
 const userRoutes = router;
 export default userRoutes;
 

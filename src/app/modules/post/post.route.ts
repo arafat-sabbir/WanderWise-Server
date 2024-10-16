@@ -33,6 +33,9 @@ router.get("/:postId", postControllers.getSinglePost);
 router.delete("/:postId", postControllers.deleteSinglePost);
 
 
+// Upvote Or DownVote On A Post By Post _Id
+router.patch("/vote/:id", AuthorizeRequest("user"),validateRequest(postValidation.votePostValidation), postControllers.votePost);
+
 const postRoutes = router;
 export default postRoutes;
 

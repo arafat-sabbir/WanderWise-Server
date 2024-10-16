@@ -29,10 +29,59 @@ const deleteSinglePost = async (id: string) => {
   return result;
 };
 
+// Upvote Or DownVote A Post Using PostId
+
+const votePost = async (id: string, status: 'upvote' | 'downvote', user: any) => {
+  const postExist = await PostModel.findById(id);
+  if (!postExist) {
+    throw new AppError(404, 'Post not found');
+  }
+
+  const userIdStr = String(user); // Ensure userId is a string for proper comparison
+
+  // Check if the user has already upvoted or downvoted
+  const hasUpvoted = postExist.upvotes.some((u: any) => String(u) === userIdStr);
+  const hasDownvoted = postExist.downvotes.some((u: any) => String(u) === userIdStr);
+
+  // Handle upvote
+  if (status === 'upvote') {
+    if (!hasUpvoted) {
+      // If the user has downvoted before, remove them from downvotes
+      if (hasDownvoted) {
+        postExist.downvotes = postExist.downvotes.filter((u: any) => String(u) !== userIdStr);
+      }
+      // Add the user to upvotes
+      postExist.upvotes.push(user);
+    }
+  }
+
+  // Handle downvote
+  if (status === 'downvote') {
+    if (!hasDownvoted) {
+      // If the user has upvoted before, remove them from upvotes
+      if (hasUpvoted) {
+        postExist.upvotes = postExist.upvotes.filter((u: any) => String(u) !== userIdStr);
+      }
+      // Add the user to downvotes
+      postExist.downvotes.push(user);
+    }
+  }
+
+  // Save the updated post
+  const updatedPost = await postExist.save();
+
+  return updatedPost;
+};
+
+
+
+
+
 export const postServices = {
   createPost,
   getAllPost,
   getSinglePost,
   deleteSinglePost,
+  votePost,
 };
 

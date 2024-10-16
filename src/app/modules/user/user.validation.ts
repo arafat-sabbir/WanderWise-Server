@@ -42,8 +42,18 @@ const loginUserSchema = z.object({
   }),
 });
 
+const followOrUnFollowUser = z.object({
+  body: z.object({
+    status: z.enum(['follow', 'unfollow'], {
+      invalid_type_error: "Status must be either 'follow' or 'unfollow'",
+      required_error:"Please Provide A Status"
+    }),
+  }),
+});
+
 export const userValidation = {
   createUserSchema,
   loginUserSchema,
+  followOrUnFollowUser
 };
 

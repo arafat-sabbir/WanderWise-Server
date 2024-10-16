@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Import the model
+import { Types } from 'mongoose';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import generateToken from '../../utils/generateToken';
@@ -55,12 +57,48 @@ const updateMe = async (id: string, payload: TUser) => {
   return await UserModel.findByIdAndUpdate(id, payload, { new: true });
 };
 
-// Service function to retrieve multiple user based on query parameters.
+// Follow Or Unfollow User 
+const followOrUnFollowUser = async (id: string, status: 'follow' | 'unfollow', user: any) => {
+  console.log(id,status,user);
+  const userExist = await UserModel.findById(id);
+  if (!userExist) {
+    throw new AppError(404, 'User not found');
+  }
+
+  const userIdStr = String(user); // Ensure userId is a string for proper comparison
+
+  // Check if the user has already followed
+  const hasFollowed = userExist.followers.some((u: any) => String(u) === userIdStr);
+
+  // Handle follow
+  if (status === 'follow') {
+    if (!hasFollowed) {
+      userExist.followers.push(user);
+    }
+  }
+
+  // Handle unfollow
+  if (status === 'unfollow') {
+    if (hasFollowed) {
+      // Remove the user from followers using pull
+      userExist.followers = userExist.followers.filter((follower: Types.ObjectId) => follower.toString() !== user
+      );
+    }
+  }
+
+  // Save the updated user
+  const updatedUser = await userExist.save();
+
+  return updatedUser;
+};
+
+
 
 export const userServices = {
   createUser,
   getMe,
   loginUser,
-  updateMe
+  updateMe,
+  followOrUnFollowUser
 };
 

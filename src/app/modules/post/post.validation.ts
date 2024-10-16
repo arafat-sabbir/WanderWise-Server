@@ -24,7 +24,15 @@ const createPostSchema = z.object({
   }),
 });
 
+const votePostValidation = z.object({
+  body: z.object({
+    status: z.enum(['upvote', 'downvote'],{invalid_type_error:"Status must be either 'upvote' or 'downvote'"}),
+  }),
+});
+
 export const postValidation = {
   createPostSchema,
+  votePostValidation,
+  votePostValidation
 };
 

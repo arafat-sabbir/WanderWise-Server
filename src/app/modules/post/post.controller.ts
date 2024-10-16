@@ -44,10 +44,22 @@ const deleteSinglePost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Upvote Or DownVote A Post Using PostId
+const votePost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const result = await postServices.votePost(id, status, req.user.id);
+  sendResponse(res, {
+    message: 'Post Voted successfully',
+    data: result,
+  });
+});
+
 export const postControllers = {
   createPost,
   getSinglePost,
   getAllPost,
   deleteSinglePost,
+  votePost,
 };
 
