@@ -42,24 +42,38 @@ const loginUser = async (payload: { email: string; password: string }) => {
     config.jwt_access_expires as string
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {password,...userData} = user.toObject();
+  const { password, ...userData } = user.toObject();
   return { token, ...userData };
 };
 
-
-//Get Current User Detail By Token Id
 const getMe = async (id: string) => {
-  return await UserModel.findById(id);
+  // Find all users who follow the current user (followers array contains the user ID)
+  const users = await UserModel.find({ followers: id }).exec();
+  
+  // Get the current user's details by ID
+  const user = await UserModel.findById(id).populate("followers");
+  
+  // Convert the Mongoose user document to a plain object
+  const userData = user?.toObject();
+
+  // Ensure 'following' is correctly set as the number of users following the current user
+  const data = {
+    ...userData, // Spread user data first to ensure your custom 'following' key takes precedence
+    following: users // Set following as the number of users following the current user
+  };
+
+  console.log(data); // Debug: check if following is correctly set as a number
+
+  return data;
 };
 
 
-const updateMe = async (id: string, payload: TUser) => {
-  return await UserModel.findByIdAndUpdate(id, payload, { new: true });
+const updateMe = async (payload: any) => {
+  return await UserModel.findByIdAndUpdate(payload.id, payload, { new: true });
 };
 
-// Follow Or Unfollow User 
+// Follow Or Unfollow User
 const followOrUnFollowUser = async (id: string, status: 'follow' | 'unfollow', user: any) => {
-  console.log(id,status,user);
   const userExist = await UserModel.findById(id);
   if (!userExist) {
     throw new AppError(404, 'User not found');
@@ -81,7 +95,8 @@ const followOrUnFollowUser = async (id: string, status: 'follow' | 'unfollow', u
   if (status === 'unfollow') {
     if (hasFollowed) {
       // Remove the user from followers using pull
-      userExist.followers = userExist.followers.filter((follower: Types.ObjectId) => follower.toString() !== user
+      userExist.followers = userExist.followers.filter(
+        (follower: Types.ObjectId) => follower.toString() !== user
       );
     }
   }
@@ -92,13 +107,11 @@ const followOrUnFollowUser = async (id: string, status: 'follow' | 'unfollow', u
   return updatedUser;
 };
 
-
-
 export const userServices = {
   createUser,
   getMe,
   loginUser,
   updateMe,
-  followOrUnFollowUser
+  followOrUnFollowUser,
 };
 

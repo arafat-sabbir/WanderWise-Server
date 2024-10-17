@@ -43,9 +43,19 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 
 const updateMe = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.user;
-  // Call the service method to create a new user and get the result
-  const result = await userServices.updateMe(id, req.body);
-  // Send a success response with the created resource data
+  const { photo } = req;
+
+  // Create an update object that conditionally includes the photo only if it exists
+  const updateData: any = { id, ...req.body };
+  
+  if (photo) {
+    updateData.profilePicture = photo;
+  }
+
+  // Call the service method to update the user profile
+  const result = await userServices.updateMe(updateData);
+
+  // Send a success response with the updated resource data
   sendResponse(res, {
     message: 'User Detail Updated Successfully',
     data: result,

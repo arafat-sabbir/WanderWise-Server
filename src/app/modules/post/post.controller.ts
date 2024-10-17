@@ -5,9 +5,13 @@ import sendResponse from '../../utils/sendResponse';
 
 // Controller function to handle the creation of a single Post.
 const createPost = catchAsync(async (req: Request, res: Response) => {
+  const { photos } = req;
+  const { images, ...rest } = req.body;
+
+  console.log(photos);
   const { id } = req.user;
   // Call the service method to create a new post and get the result
-  const result = await postServices.createPost({ user: id, ...req.body });
+  const result = await postServices.createPost({ images: photos, user: id, ...rest });
   // Send a success response with the created resource data
   sendResponse(res, {
     message: 'New Post created Successfully',
@@ -50,7 +54,18 @@ const votePost = catchAsync(async (req, res) => {
   const { status } = req.body;
   const result = await postServices.votePost(id, status, req.user.id);
   sendResponse(res, {
-    message: 'Post Voted successfully',
+    message: `Post ${status.charAt(0).toUpperCase() + status.slice(1)}ed successfully`,
+    data: result,
+  });
+});
+
+const getAllPostForUser = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to get multiple post based on query parameters and get the result
+  console.log(req.user.id, req.query,"lkajdflkajskldfjklads");
+  const result = await postServices.getAllPostForUser(req.user.id, req.query);
+  // Send a success response with the retrieved resources data
+  sendResponse(res, {
+    message: 'Posts Retrieved Successfully',
     data: result,
   });
 });
@@ -61,5 +76,6 @@ export const postControllers = {
   getAllPost,
   deleteSinglePost,
   votePost,
+  getAllPostForUser,
 };
 

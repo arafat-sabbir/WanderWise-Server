@@ -28,9 +28,20 @@ router.post('/login', validateRequest(userValidation.loginUserSchema), userContr
 // Get current User Detail By Token Id
 router.get('/me', AuthorizeRequest(), userControllers.getMe);
 
-router.put('/me', AuthorizeRequest(), userControllers.updateMe);
+router.put(
+  '/me',
+  upload.single('profilePicture'),
+  uploadImage,
+  AuthorizeRequest(),
+  userControllers.updateMe
+);
 
-router.put('/follow-unfollow/:id',AuthorizeRequest(),validateRequest(userValidation.followOrUnFollowUser), userControllers.followOrUnFollowUser);
+router.put(
+  '/follow-unfollow/:id',
+  AuthorizeRequest(),
+  validateRequest(userValidation.followOrUnFollowUser),
+  userControllers.followOrUnFollowUser
+);
 
 const userRoutes = router;
 export default userRoutes;

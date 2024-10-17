@@ -33,6 +33,5 @@ const votePostValidation = z.object({
 export const postValidation = {
   createPostSchema,
   votePostValidation,
-  votePostValidation
 };
 

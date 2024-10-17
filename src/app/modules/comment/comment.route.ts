@@ -5,7 +5,6 @@ import AuthorizeRequest from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 const router = express.Router();
 
-
 // Comment On A Post By Post Id
 router.post(
   '/:id',

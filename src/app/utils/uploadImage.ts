@@ -20,7 +20,6 @@ export const uploadImage = async (req: Request, res: Response, next: NextFunctio
     if (!req.file) {
         return next();
     }
-
     try {
         // Convert buffer to Base64
         const base64Image = req.file.buffer.toString('base64');
@@ -37,5 +36,38 @@ export const uploadImage = async (req: Request, res: Response, next: NextFunctio
         next();
     } catch (error:any) {
         res.status(500).json({ error: 'Failed to upload image' });
+    }
+};
+
+
+export const uploadImages = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.files || !Array.isArray(req.files.images) || req.files.images.length === 0) {
+        return next();
+    }
+
+    try {
+        // Prepare an array to hold uploaded image URLs
+        const uploadPromises = req.files.images.map(async (file: Express.Multer.File) => {
+            // Convert buffer to Base64
+            const base64Image = file.buffer.toString('base64');
+            const dataURI = `data:${file.mimetype};base64,${base64Image}`;
+
+            // Upload image to Cloudinary
+            const uploadedImage: UploadApiResponse = await cloudinary.uploader.upload(dataURI, {
+                resource_type: 'auto',
+                public_id: `${Date.now()}-${file.originalname}`
+            });
+
+            return uploadedImage?.secure_url; // Return the secure URL
+        });
+
+        // Wait for all uploads to complete
+        const uploadedImages = await Promise.all(uploadPromises);
+        
+        // Attach the uploaded image URLs to the request object
+        req.photos = uploadedImages; // Store the array of URLs in req.photos
+        next();
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to upload images' });
     }
 };
