@@ -1,13 +1,59 @@
 // Import the model
-import PaymentModel from './payment.model'; 
+import mongoose from 'mongoose';
+import PaymentModel from './payment.model';
+import AppError from '../../errors/AppError';
+import axios from 'axios';
+import config from '../../config';
+import UserModel from '../user/user.model';
 
 // Service function to create a new payment.
-const createPayment = async (data: object) => {
-  const newPayment = await PaymentModel.create(data);
-  return newPayment;
+const createPayment = async (payload: any) => {
+  const user = await UserModel.findById(payload.user);
+  if (!user) {
+    throw new AppError(404, 'User not found');
+  }
+  try {
+    const timestamp = Date.now(); // Current timestamp in milliseconds
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    const transactionId = `${timestamp}${randomNum}`;
+    const response = await axios.post(config.payment_url!, {
+      store_id: config.store_id,
+      tran_id: `${transactionId}`,
+      success_url: `${config.backend_url}/api/v1/payments/confirm-payment?status=success&transactionId=${transactionId}`,
+      fail_url: `${config.backend_url}/api/v1/payments/confirm-payment?status=error&transactionId=${transactionId}`,
+      cancel_url: `${config.frontend_url}/booking?status=canceled&transactionId=${transactionId}`,
+      amount: 500,
+      currency: 'BDT',
+      signature_key: config.signature_key,
+      desc: 'Merchant Registration Payment',
+      cus_name: user!.name || '',
+      cus_email: user!.email || '',
+      cus_add1: payload.address || '',
+      cus_add2: 'Mohakhali DOHS',
+      cus_city: 'Dhaka',
+      cus_state: 'Dhaka',
+      cus_postcode: '1206',
+      cus_country: 'Bangladesh',
+      cus_phone: '01632024256',
+      type: 'json',
+    });
+    payload.transactionId = `${timestamp}${randomNum}`;
+    await PaymentModel.create({ user: user?._id, ...payload });
+    console.log(response?.data);
+    return { payment_url: response?.data.payment_url };
+  } catch (error: any) {
+    throw new AppError(400, error.message as string);
+  }
 };
 
-
+const updatePaymentStatus = async (id: string) => {
+  const result = await PaymentModel.findOneAndUpdate(
+    { transactionId: id },
+    { status: 'paid' },
+    { new: true }
+  );
+  return result;
+};
 // Service function to retrieve a single payment by ID.
 const getPaymentById = async (id: string) => {
   return await PaymentModel.findById(id);
@@ -22,4 +68,6 @@ export const paymentServices = {
   createPayment,
   getPaymentById,
   getAllPayment,
+  updatePaymentStatus,
 };
+

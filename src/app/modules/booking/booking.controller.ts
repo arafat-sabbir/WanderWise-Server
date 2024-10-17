@@ -1,46 +1,40 @@
-import { Request, Response } from 'express';
-import { paymentServices } from './payment.service';
-import catchAsync from '../../utils/catchAsync';
-import sendResponse from '../../utils/sendResponse';
+import catchAsync from "../../utils/catchAsync";
+import bookingService from "./booking.service";
+import sendResponse from "../../utils/sendResponse";
+import BookingModel from "./booking.model";
 
-// Controller function to handle the creation of a single Payment.
-const createPayment = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.user;
-  const { amount, name, email } = req.body;
-  // Call the service method to create a new payment and get the result
-  const result = await paymentServices.createPayment({ amount, name, email, user: id });
-  // Send a success response with the created resource data
+const create = catchAsync(async (req, res) => {
+  const { serviceId, slotId, ...others } = req.body;
+  const data = {
+    customer: req.user._id,
+    service: req.body.serviceId,
+    slot: req.body.slotId,
+    ...others,
+  };
+  const result = await bookingService.create(data);
   sendResponse(res, {
-    message: 'New Payment created Successfully',
+    message: "Booking successful",
     data: result,
   });
 });
 
-// Controller function to handle the retrieval of a single payment by ID.
-const getSinglePayment = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  // Call the service method to get the payment by ID and get the result
-  const result = await paymentServices.getPaymentById(id);
-  // Send a success response with the retrieved resource data
+const getAll = catchAsync(async (req, res) => {
+  const result = await bookingService.getAll();
   sendResponse(res, {
-    message: 'Payment Retrieved Successfully',
+    message: "All bookings retrieved successfully",
     data: result,
   });
 });
-
-// Controller function to handle the retrieval of multiple payment.
-const getAllPayment = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to get multiple payment based on query parameters and get the result
-  const result = await paymentServices.getAllPayment(req.query);
-  // Send a success response with the retrieved resources data
+const getSingle = catchAsync(async (req, res) => {
+  const result = await bookingService.getSingle(req.user._id);
   sendResponse(res, {
-    message: 'Payments Retrieved Successfully',
+    message: "User bookings retrieved successfully",
     data: result,
   });
 });
 
 
-const confirmPayment = catchAsync(async (req, res) => {
+const bookingPage = catchAsync(async (req, res) => {
   // Read the status from the query parameters
   const { status, transactionId } = req.query;
 
@@ -50,9 +44,9 @@ const confirmPayment = catchAsync(async (req, res) => {
   let color;
 
   if (status === 'success') {
-    await paymentServices.updatePaymentStatus(transactionId as string);
+    await bookingService.updatePaymentStatus(transactionId as string);
     title = 'Payment Successful!';
-    message = 'Thank you for Verifying You Account. Your payment has been successfully processed.';
+    message = 'Thank you for booking your car wash service. Your payment has been successfully processed.';
     color = '#38a169'; // Green
   } else {
     title = 'Payment Failed!';
@@ -123,9 +117,7 @@ const confirmPayment = catchAsync(async (req, res) => {
     </div>
   `);
 });
-export const paymentControllers = {
-  createPayment,
-  getSinglePayment,
-  getAllPayment,
-  confirmPayment
-};
+
+
+
+export const bookingController = { create, getAll, getSingle, bookingPage };

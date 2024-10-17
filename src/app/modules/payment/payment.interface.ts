@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 export interface TPayment {
   _id: ObjectId;
-  userId: ObjectId; // Reference to User
+  user: ObjectId; // Reference to User
   amount: number; // Amount paid
   paymentMethod: string; // Aamarpay, Stripe, etc.
   status: string; // e.g., "completed", "pending"

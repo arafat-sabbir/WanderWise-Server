@@ -6,12 +6,13 @@ import { Router } from 'express';
 import { paymentControllers } from './payment.controller';
 import validateRequest from '../../middlewares/validateRequest';
 import { paymentValidation } from './payment.validation';
+import AuthorizeRequest from '../../middlewares/auth';
 
 
 // Initialize router
 const router = Router();
 
-router.post("/create-payment",validateRequest(paymentValidation.createPaymentSchema), paymentControllers.createPayment);
-
+router.post("/create-payment",AuthorizeRequest(),validateRequest(paymentValidation.createPaymentSchema), paymentControllers.createPayment);
+router.post('/confirm-payment',paymentControllers.confirmPayment)
 const paymentRoutes = router;
 export default paymentRoutes;
