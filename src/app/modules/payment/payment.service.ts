@@ -1,5 +1,4 @@
 // Import the model
-import mongoose from 'mongoose';
 import PaymentModel from './payment.model';
 import AppError from '../../errors/AppError';
 import axios from 'axios';
@@ -12,6 +11,13 @@ const createPayment = async (payload: any) => {
   if (!user) {
     throw new AppError(404, 'User not found');
   }
+  const paymentExist = await PaymentModel.findOne({
+    user: user?._id,
+  });
+
+  if (paymentExist) {
+    throw new AppError(400, 'You have already made a payment Please Contact Admin');
+  }
   try {
     const timestamp = Date.now(); // Current timestamp in milliseconds
     const randomNum = Math.floor(100000 + Math.random() * 900000);
@@ -19,9 +25,9 @@ const createPayment = async (payload: any) => {
     const response = await axios.post(config.payment_url!, {
       store_id: config.store_id,
       tran_id: `${transactionId}`,
-      success_url: `${config.backend_url}/api/v1/payments/confirm-payment?status=success&transactionId=${transactionId}`,
+      success_url: `${config.backend_url}/api/v1/payments/confirm-payment?status=success&transactionId=${transactionId}&user=${user?._id}`,
       fail_url: `${config.backend_url}/api/v1/payments/confirm-payment?status=error&transactionId=${transactionId}`,
-      cancel_url: `${config.frontend_url}/booking?status=canceled&transactionId=${transactionId}`,
+      cancel_url: `${config.frontend_url}/payment?status=canceled&transactionId=${transactionId}`,
       amount: 500,
       currency: 'BDT',
       signature_key: config.signature_key,

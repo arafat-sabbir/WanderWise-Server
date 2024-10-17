@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { paymentServices } from './payment.service';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
+import PaymentModel from './payment.model';
+import UserModel from '../user/user.model';
 
 // Controller function to handle the creation of a single Payment.
 const createPayment = catchAsync(async (req: Request, res: Response) => {
@@ -39,11 +41,10 @@ const getAllPayment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
 const confirmPayment = catchAsync(async (req, res) => {
   // Read the status from the query parameters
-  const { status, transactionId } = req.query;
-
+  const { status, transactionId, user } = req.query;
+  await UserModel.findByIdAndUpdate(user, { isVerified: true });
   // Define the title, message, and color based on the status
   let title;
   let message;
@@ -103,7 +104,7 @@ const confirmPayment = catchAsync(async (req, res) => {
           <p>We'll contact you soon with further details.</p>
         </div>
         <div style="margin-top: 24px;">
-          <a href="http://localhost:5173"
+          <a href="http://localhost:3000"
             style="
               display: inline-block;
               padding: 12px 24px;
@@ -127,5 +128,6 @@ export const paymentControllers = {
   createPayment,
   getSinglePayment,
   getAllPayment,
-  confirmPayment
+  confirmPayment,
 };
+
