@@ -65,7 +65,7 @@ const getPaymentById = async (id: string) => {
 
 // Service function to retrieve multiple payment based on query parameters.
 const getAllPayment = async (query: object) => {
-  return await PaymentModel.find(query);
+  return await PaymentModel.find(query).populate("user");
 };
 
 export const paymentServices = {

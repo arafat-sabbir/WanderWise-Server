@@ -19,7 +19,7 @@ const createPostSchema = z.object({
     category: z.string({
       required_error: 'Category Is Required',
     }),
-    isPremium: z.boolean().optional(),
+    isPremium: z.enum(["true", "false"],{invalid_type_error:"Premium must be either 'true' or 'false'"}),
     tags: tagsSchema,
   }),
 });

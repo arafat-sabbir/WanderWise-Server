@@ -8,7 +8,6 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
   const { photos } = req;
   const { images, ...rest } = req.body;
 
-  console.log(photos);
   const { id } = req.user;
   // Call the service method to create a new post and get the result
   const result = await postServices.createPost({ images: photos, user: id, ...rest });

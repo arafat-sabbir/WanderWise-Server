@@ -8,6 +8,7 @@ const createPost = async (data: any) => {
   if (!data.images) {
     throw new AppError(400, 'Images Is Required');
   }
+  data.isPremium = data.isPremium === 'true';
   const newPost = await PostModel.create(data);
   return newPost;
 };
@@ -27,23 +28,47 @@ const getSinglePost = async (id: string) => {
 
 // Service function to retrieve multiple post based on query parameters.
 const getAllPost = async (query: Record<string, unknown>) => {
-  const result = new QueryBuilder(
-    PostModel.find()
-      .sort('-createdAt')
-      .populate('user') // Populate the user who created the post
-      .populate({
-        path: 'comments', // Populate comments
-        populate: {
-          path: 'user', // Populate the user inside each comment
-          model: 'User', // Specify the model if needed
-        },
-      }),
-    query
-  )
+  // Build the base query
+  let postQuery = PostModel.find()
+    .sort('-createdAt') // Initial sort by creation date
+    .populate('user') // Populate the user who created the post
+    .populate({
+      path: 'comments', // Populate comments
+      populate: {
+        path: 'user', // Populate the user inside each comment
+        model: 'User', // Specify the model if needed
+      },
+    });
+
+  // If query.category is available, filter by category
+  if (query.category !== "all" && query.category) {
+    postQuery = postQuery.where('category').equals(query.category);
+  }
+
+  // Create a new QueryBuilder instance for pagination and searching
+  const result = new QueryBuilder(postQuery, query)
     .paginate()
     .search(['title']);
-  return await result.modelQuery;
+
+  // Execute the query and get the results
+  const posts = await result.modelQuery;
+
+  // If sort parameter is provided, sort the posts based on the count of upvotes
+  if (query.sort) {
+    posts.sort((a, b) => {
+      const upvotesCountA = a.upvotes.length;
+      const upvotesCountB = b.upvotes.length;
+
+      return query.sort === 'asc' ? upvotesCountA - upvotesCountB : upvotesCountB - upvotesCountA;
+    });
+  }
+
+  return posts; // Return the sorted posts
 };
+
+
+
+
 
 // Delete A Post By PostId
 const deleteSinglePost = async (id: string) => {

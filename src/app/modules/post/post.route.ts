@@ -14,6 +14,7 @@ const router = Router();
 
 router.post(
   '/',
+  
   AuthorizeRequest(),
   upload.fields([{ name: 'images', maxCount: 3 }]),
   uploadImages, // Change to uploadImages to handle multiple files
@@ -33,7 +34,7 @@ router.delete('/:postId', postControllers.deleteSinglePost);
 // Upvote Or DownVote On A Post By Post _Id
 router.patch(
   '/vote/:id',
-  AuthorizeRequest('user'),
+  AuthorizeRequest(),
   validateRequest(postValidation.votePostValidation),
   postControllers.votePost
 );
