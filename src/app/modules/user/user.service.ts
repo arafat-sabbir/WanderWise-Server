@@ -106,9 +106,59 @@ const followOrUnFollowUser = async (id: string, status: 'follow' | 'unfollow', u
   return updatedUser;
 };
 
+
 const getAllUser = async () => {
-  return await UserModel.find().populate('following followers');
+  try {
+    const users = await UserModel.aggregate([
+      {
+        // First stage: lookup to find all users where this user's _id is in their followers array (to populate 'following')
+        $lookup: {
+          from: 'users', // collection to join
+          let: { userId: '$_id' }, // reference to the current user's _id
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$$userId', '$followers'] }, // Check if the user's _id exists in another user's followers array
+              },
+            },
+          ],
+          as: 'following', // Name the output field for the following users
+        },
+      },
+      {
+        // Second stage: lookup to populate the 'followers' field
+        $lookup: {
+          from: 'users', // collection to join
+          localField: 'followers', // field from UserModel
+          foreignField: '_id', // field from the 'users' collection
+          as: 'followers', // Name the output field for the populated followers
+        },
+      },
+      {
+        // Optional stage to exclude fields or project necessary ones
+        $project: {
+          email: 1,
+          name: 1,
+          profilePicture: 1,
+          bio: 1,
+          isVerified: 1,
+          followers: 1, // Now populated followers
+          following: 1, // The new field we created using $lookup for following
+          role: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    ]);
+
+    return users;
+  } catch (error) {
+    console.error('Error fetching users with followers and following:', error);
+    throw error;
+  }
 };
+
+
 
 export const userServices = {
   createUser,
