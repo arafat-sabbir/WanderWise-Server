@@ -41,13 +41,13 @@ export const uploadImage = async (req: Request, res: Response, next: NextFunctio
 
 
 export const uploadImages = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.files || !Array.isArray(req.files.images) || req.files.images.length === 0) {
+    if (!req.files || !Array.isArray((req.files as any).images) || (req.files as any).images.length === 0) {
         return next();
     }
 
     try {
         // Prepare an array to hold uploaded image URLs
-        const uploadPromises = req.files.images.map(async (file: Express.Multer.File) => {
+        const uploadPromises = (req.files as any).images.map(async (file: Express.Multer.File) => {
             // Convert buffer to Base64
             const base64Image = file.buffer.toString('base64');
             const dataURI = `data:${file.mimetype};base64,${base64Image}`;
@@ -68,6 +68,6 @@ export const uploadImages = async (req: Request, res: Response, next: NextFuncti
         req.photos = uploadedImages; // Store the array of URLs in req.photos
         next();
     } catch (error: any) {
-        res.status(500).json({ error: 'Failed to upload images' });
+        res.status(500).json({ error: 'Failed to upload images',errors: error });
     }
 };

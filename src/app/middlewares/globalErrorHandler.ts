@@ -1,4 +1,5 @@
-import { ErrorRequestHandler, Response } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ErrorRequestHandler, NextFunction, Response } from 'express';
 import { ZodError } from 'zod';
 import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 import config from '../config';
@@ -8,23 +9,12 @@ import handleCastError from '../errors/HandleCastError';
 import handleDuplicateError from '../errors/HandleDuplicateError';
 import AppError from '../errors/AppError';
 
-/**
- * Global error handler for Express.js applications.
- * Handles errors that occur during the request-response cycle.
- *
- * @param {Error} error - The error object.
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @param {NextFunction} next - The next function.
- * @return {Response} The JSON response containing the error message and status code.
- */
 const globalErrorHandler: ErrorRequestHandler = (
   error,
   req,
   res: Response<TGenericErrorResponse>,
-  next
+  next: NextFunction
 ) => {
-  // Set default values for status code, message, and error sources.
   let statusCode = 500;
   let stack = null;
   let message = 'Something Went Wrong';
@@ -35,7 +25,6 @@ const globalErrorHandler: ErrorRequestHandler = (
     },
   ];
 
-  // Check the type of error and simplify it accordingly.
   if (error instanceof ZodError) {
     const simplifiedError = handleZodError(error);
     statusCode = simplifiedError?.statusCode;
@@ -81,14 +70,16 @@ const globalErrorHandler: ErrorRequestHandler = (
     stack = config.node_env === 'development' && error.stack;
   }
 
-  // Return a JSON response with the error message and status code.
-  return res.status(statusCode).json({
+  res.status(statusCode).json({
     statusCode,
     success: false,
     message,
     errorSources,
     ...(stack && { stack }),
   });
+
+  // Ensure the function returns void
+  return;
 };
 
 export default globalErrorHandler;
