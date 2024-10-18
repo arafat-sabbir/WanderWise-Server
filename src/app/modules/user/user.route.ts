@@ -43,6 +43,8 @@ router.put(
   userControllers.followOrUnFollowUser
 );
 
+router.get('/all', AuthorizeRequest('admin'), userControllers.getAllUser);
+
 const userRoutes = router;
 export default userRoutes;
 

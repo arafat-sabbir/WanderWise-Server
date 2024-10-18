@@ -17,15 +17,15 @@ const AuthorizeRequest = (...roles: string[]) => {
     const token = req.headers.authorization?.split(' ')[1];
     // If no token is provided, throw an unauthorized error
     if (!token) {
-      throw new AppError(401, 'Unauthorized Access');
+      throw new AppError(401, 'Unauthorized Access1');
     }
     try {
       const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
       req.user = decoded;
       const { id, role } = decoded;
-    
+      console.log(roles,role);
       if (roles.length > 0 && !roles.includes(role)) {
-        throw new AppError(401, 'Unauthorized Access');
+        throw new AppError(401, 'Unauthorized Access2');
       }
     
       const user = await UserModel.findById(id);
@@ -34,7 +34,7 @@ const AuthorizeRequest = (...roles: string[]) => {
       }
     } catch (error: any) {
       console.error('JWT Error:', error.message);
-      throw new AppError(401, `Unauthorized Access: ${error.message}`);
+      throw new AppError(401, `Unauthorized Access3: ${error.message}`);
     }
     
     next();

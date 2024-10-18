@@ -47,7 +47,7 @@ const updateMe = catchAsync(async (req: Request, res: Response) => {
 
   // Create an update object that conditionally includes the photo only if it exists
   const updateData: any = { id, ...req.body };
-  
+
   if (photo) {
     updateData.profilePicture = photo;
   }
@@ -76,11 +76,22 @@ const followOrUnFollowUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllUser = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to get multiple user based on query parameters and get the result
+  const result = await userServices.getAllUser();
+  // Send a success response with the retrieved resources data
+  sendResponse(res, {
+    message: 'Users Retrieved Successfully',
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   loginUser,
   getMe,
   updateMe,
   followOrUnFollowUser,
+  getAllUser,
 };
 

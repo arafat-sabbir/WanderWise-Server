@@ -44,8 +44,6 @@ const createPayment = async (payload: any) => {
       type: 'json',
     });
     payload.transactionId = `${timestamp}${randomNum}`;
-    await PaymentModel.create({ user: user?._id, ...payload });
-    console.log(response?.data);
     return { payment_url: response?.data.payment_url };
   } catch (error: any) {
     throw new AppError(400, error.message as string);

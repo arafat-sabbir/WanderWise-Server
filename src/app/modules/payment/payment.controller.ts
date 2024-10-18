@@ -44,14 +44,15 @@ const getAllPayment = catchAsync(async (req: Request, res: Response) => {
 const confirmPayment = catchAsync(async (req, res) => {
   // Read the status from the query parameters
   const { status, transactionId, user } = req.query;
-  await UserModel.findByIdAndUpdate(user, { isVerified: true });
+
   // Define the title, message, and color based on the status
   let title;
   let message;
   let color;
 
   if (status === 'success') {
-    await paymentServices.updatePaymentStatus(transactionId as string);
+    await PaymentModel.create({ user, status: 'paid' });
+    await UserModel.findByIdAndUpdate(user, { isVerified: true });
     title = 'Payment Successful!';
     message = 'Thank you for Verifying You Account. Your payment has been successfully processed.';
     color = '#38a169'; // Green

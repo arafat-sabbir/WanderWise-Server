@@ -49,24 +49,23 @@ const loginUser = async (payload: { email: string; password: string }) => {
 const getMe = async (id: string) => {
   // Find all users who follow the current user (followers array contains the user ID)
   const users = await UserModel.find({ followers: id }).exec();
-  
+
   // Get the current user's details by ID
-  const user = await UserModel.findById(id).populate("followers");
-  
+  const user = await UserModel.findById(id).populate('followers');
+
   // Convert the Mongoose user document to a plain object
   const userData = user?.toObject();
 
   // Ensure 'following' is correctly set as the number of users following the current user
   const data = {
     ...userData, // Spread user data first to ensure your custom 'following' key takes precedence
-    following: users // Set following as the number of users following the current user
+    following: users, // Set following as the number of users following the current user
   };
 
   console.log(data); // Debug: check if following is correctly set as a number
 
   return data;
 };
-
 
 const updateMe = async (payload: any) => {
   return await UserModel.findByIdAndUpdate(payload.id, payload, { new: true });
@@ -107,11 +106,16 @@ const followOrUnFollowUser = async (id: string, status: 'follow' | 'unfollow', u
   return updatedUser;
 };
 
+const getAllUser = async () => {
+  return await UserModel.find().populate('following followers');
+};
+
 export const userServices = {
   createUser,
   getMe,
   loginUser,
   updateMe,
   followOrUnFollowUser,
+  getAllUser,
 };
 
