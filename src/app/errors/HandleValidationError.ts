@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import { TErrorSources } from '../interface/error';
 
 const handleValidationError = (err: mongoose.Error.ValidationError) => {
-  console.log('from Validation error', err);
   const statusCode = 400;
   const errorSources: TErrorSources =
     (err.errors &&

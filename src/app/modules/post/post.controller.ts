@@ -60,7 +60,6 @@ const votePost = catchAsync(async (req, res) => {
 
 const getAllPostForUser = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to get multiple post based on query parameters and get the result
-  console.log(req.user.id, req.query,"lkajdflkajskldfjklads");
   const result = await postServices.getAllPostForUser(req.user.id, req.query);
   // Send a success response with the retrieved resources data
   sendResponse(res, {

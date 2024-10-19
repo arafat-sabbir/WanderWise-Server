@@ -23,7 +23,6 @@ const AuthorizeRequest = (...roles: string[]) => {
       const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
       req.user = decoded;
       const { id, role } = decoded;
-      console.log(roles,role);
       if (roles.length > 0 && !roles.includes(role)) {
         throw new AppError(401, 'Unauthorized Access2');
       }

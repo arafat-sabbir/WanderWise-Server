@@ -62,7 +62,6 @@ const getMe = async (id: string) => {
     following: users, // Set following as the number of users following the current user
   };
 
-  console.log(data); // Debug: check if following is correctly set as a number
 
   return data;
 };
@@ -158,7 +157,6 @@ const getAllUser = async () => {
 
 const updateUserRole = async (id: string, role: string) => {
   const result = await UserModel.findByIdAndUpdate(id, { role }, { new: true });
-  console.log(result,"lakjdfa",role);
   return result;
 };
 
