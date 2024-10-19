@@ -45,6 +45,13 @@ router.put(
 
 router.get('/all', AuthorizeRequest('admin'), userControllers.getAllUser);
 
+router.put(
+  '/update-role/:id',
+  AuthorizeRequest('admin'),
+  validateRequest(userValidation.updateUserRole),
+  userControllers.updateUserRole
+);
+
 const userRoutes = router;
 export default userRoutes;
 

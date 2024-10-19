@@ -86,6 +86,19 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+const updateUserRole = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { role } = req.body;
+  // Call the service method to create a new user and get the result
+  const result = await userServices.updateUserRole(id, role);
+  // Send a success response with the created resource data
+  sendResponse(res, {
+    message: 'User Role Updated Successfully',
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   loginUser,
@@ -93,5 +106,6 @@ export const userControllers = {
   updateMe,
   followOrUnFollowUser,
   getAllUser,
+  updateUserRole
 };
 

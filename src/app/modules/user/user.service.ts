@@ -106,7 +106,6 @@ const followOrUnFollowUser = async (id: string, status: 'follow' | 'unfollow', u
   return updatedUser;
 };
 
-
 const getAllUser = async () => {
   try {
     const users = await UserModel.aggregate([
@@ -150,7 +149,6 @@ const getAllUser = async () => {
         },
       },
     ]);
-
     return users;
   } catch (error) {
     console.error('Error fetching users with followers and following:', error);
@@ -158,7 +156,11 @@ const getAllUser = async () => {
   }
 };
 
-
+const updateUserRole = async (id: string, role: string) => {
+  const result = await UserModel.findByIdAndUpdate(id, { role }, { new: true });
+  console.log(result,"lakjdfa",role);
+  return result;
+};
 
 export const userServices = {
   createUser,
@@ -167,5 +169,6 @@ export const userServices = {
   updateMe,
   followOrUnFollowUser,
   getAllUser,
+  updateUserRole,
 };
 

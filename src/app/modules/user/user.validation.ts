@@ -51,9 +51,19 @@ const followOrUnFollowUser = z.object({
   }),
 });
 
+
+const updateUserRole = z.object({
+  body: z.object({
+    role: z.enum(['admin', 'user'], {
+      invalid_type_error: "Role must be either 'admin' or 'user'",
+      required_error:"Please Provide A Role"
+    }),
+  }),
+})
 export const userValidation = {
   createUserSchema,
   loginUserSchema,
-  followOrUnFollowUser
+  followOrUnFollowUser,
+  updateUserRole
 };
 
